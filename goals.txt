@@ -1,0 +1,45 @@
+### InstaLite Must-Have Checklist ✅
+
+#### 1. Setup & Tools
+
+* [✅] React app created (Vite or Create React App)
+* [ ] Firebase project setup (Auth + Firestore + Storage)
+* [✅] Tailwind CSS installed & configured
+
+#### 2. Authentication
+
+* [ ] User signup (email/password)
+* [ ] User login/logout
+* [ ] Auth state persistence (stay logged in on refresh)
+* [ ] Basic form validation & error handling
+
+#### 3. Posting System
+
+* [ ] Upload image posts (with captions)
+* [ ] Store images in Firebase Storage
+* [ ] Save post metadata (userID, caption, image URL, timestamp) in Firestore
+* [ ] Display posts feed in reverse chronological order
+
+#### 4. Interaction Features
+
+* [ ] Like button + count for each post
+* [ ] Comment system (basic comments)
+* [ ] Display likes & comments live
+
+#### 5. User Profiles
+
+* [ ] Profile page with user info + their posts
+* [ ] Edit profile (username, profile pic) (optional for MVP)
+
+#### 6. Responsive Design
+
+* [ ] Mobile-friendly layout (nav, feed, post UI)
+* [ ] Desktop-friendly layout
+* [ ] Smooth UI/UX transitions & hover effects
+
+#### 7. Deployment & Extras
+
+* [ ] Deploy to Netlify / Vercel / Firebase Hosting
+* [ ] GitHub repo with clean commits & README
+* [ ] Bonus: Follow/unfollow users (optional)
+* [ ] Bonus: Notifications (optional)
