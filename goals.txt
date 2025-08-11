@@ -1,9 +1,9 @@
 ### InstaLite Must-Have Checklist ✅
 
-#### 1. Setup & Tools
+✅✅✅ 1. Setup & Tools
 
 * [✅] React app created (Vite or Create React App)
-* [ ] Firebase project setup (Auth + Firestore + Storage)
+* [✅] Firebase project setup (Auth + Firestore + Storage)
 * [✅] Tailwind CSS installed & configured
 
 #### 2. Authentication
