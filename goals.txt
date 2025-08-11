@@ -8,8 +8,8 @@
 
 #### 2. Authentication
 
-* [ ] User signup (email/password)
-* [ ] User login/logout
+* [✅] User signup (email/password)
+* [✅] User login/logout
 * [ ] Auth state persistence (stay logged in on refresh)
 * [ ] Basic form validation & error handling
 
