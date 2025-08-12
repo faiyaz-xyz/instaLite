@@ -14,100 +14,9 @@ import {
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { FcGoogle } from "react-icons/fc";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  updateProfile,
-  sendEmailVerification,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-import { db } from "../../firebaseConfig";
 
 export function Auth({ className, ...props }: React.ComponentProps<"div">) {
-  const auth = getAuth();
-
   const [isLogin, setIsLogin] = useState(true);
-
-  const [userData, setUserData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
-
-  const [loading, setLoading] = useState(false);
-
-  const errorMessages: Record<string, string> = {
-    "auth/missing-email": "Email is required.",
-    "auth/invalid-email": "Invalid email address.",
-    "auth/email-already-in-use": "Email already in use. Please login.",
-    "auth/missing-password": "Password is required.",
-    "auth/weak-password": "Password should be at least 8 characters.",
-    "auth/user-not-found": "No user found with this email.",
-    "auth/wrong-password": "Incorrect password.",
-    "auth/too-many-requests": "Too many requests. Please try again later.",
-  };
-
-  function getErrorMessage(code: string) {
-    return errorMessages[code] || "An error occurred. Please try again.";
-  }
-
-  const handleSignUp = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    createUserWithEmailAndPassword(auth, userData.email, userData.password)
-      .then(async (res) => {
-        const user = res.user;
-
-        await updateProfile(user, {
-          displayName: userData.name,
-        });
-
-        await setDoc(doc(db, "users", user.uid), {
-          uid: user.uid,
-          name: userData.name,
-          email: user.email,
-          createdAt: new Date().toISOString(),
-        });
-
-        sendEmailVerification(user).then(() => {
-          toast(
-            "A verification email has been sent. Don’t forget to check spam too."
-          );
-          setTimeout(() => {
-            setIsLogin(true);
-          }, 2000);
-        });
-      })
-      .catch((error) => {
-        toast(getErrorMessage(error.code));
-      });
-    setLoading(false);
-  };
-
-  const handleSignIn = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    signInWithEmailAndPassword(auth, userData.email, userData.password)
-      .then((res) => {
-        if (!res.user.emailVerified) {
-          toast("Verify your email before logging in.");
-        } else {
-          toast(
-            "Logged in successfully. You may now continue to your account."
-          );
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
-        }
-      })
-      .catch((error) => {
-        toast(getErrorMessage(error.code));
-      });
-    setLoading(false);
-  };
 
   return (
     <div>
@@ -121,7 +30,7 @@ export function Auth({ className, ...props }: React.ComponentProps<"div">) {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSignIn}>
+              <form>
                 <div className="flex flex-col gap-6">
                   <div className="grid gap-3">
                     <Label htmlFor="email">Email</Label>
@@ -130,37 +39,17 @@ export function Auth({ className, ...props }: React.ComponentProps<"div">) {
                       type="email"
                       placeholder="spongebob@squarepants.com"
                       required
-                      onChange={(e) =>
-                        setUserData((prev) => ({
-                          ...prev,
-                          email: e.target.value,
-                        }))
-                      }
                     />
                   </div>
                   <div className="grid gap-3">
                     <div className="flex items-center">
                       <Label htmlFor="password">Password</Label>
                     </div>
-                    <Input
-                      id="password"
-                      type="password"
-                      required
-                      onChange={(e) =>
-                        setUserData((prev) => ({
-                          ...prev,
-                          password: e.target.value,
-                        }))
-                      }
-                    />
+                    <Input id="password" type="password" required />
                   </div>
                   <div className="flex flex-col gap-3">
-                    <Button
-                      type="submit"
-                      disabled={loading}
-                      className="w-full cursor-pointer"
-                    >
-                      {loading ? "Loading..." : "Login"}
+                    <Button type="submit" className="w-full cursor-pointer">
+                      Login
                     </Button>
                     <Button variant="outline" className="w-full cursor-pointer">
                       Continue with Google <FcGoogle />
@@ -190,7 +79,7 @@ export function Auth({ className, ...props }: React.ComponentProps<"div">) {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSignUp}>
+              <form>
                 <div className="flex flex-col gap-6">
                   <div className="grid gap-3">
                     <Label htmlFor="email">Name</Label>
@@ -199,12 +88,6 @@ export function Auth({ className, ...props }: React.ComponentProps<"div">) {
                       type="text"
                       placeholder="Spongebob Squarepants"
                       required
-                      onChange={(e) =>
-                        setUserData((prev) => ({
-                          ...prev,
-                          name: e.target.value,
-                        }))
-                      }
                     />
                   </div>
                   <div className="grid gap-3">
@@ -214,37 +97,17 @@ export function Auth({ className, ...props }: React.ComponentProps<"div">) {
                       type="email"
                       placeholder="spongebob@squarepants.com"
                       required
-                      onChange={(e) =>
-                        setUserData((prev) => ({
-                          ...prev,
-                          email: e.target.value,
-                        }))
-                      }
                     />
                   </div>
                   <div className="grid gap-3">
                     <div className="flex items-center">
                       <Label htmlFor="password">Password</Label>
                     </div>
-                    <Input
-                      id="password"
-                      type="password"
-                      required
-                      onChange={(e) =>
-                        setUserData((prev) => ({
-                          ...prev,
-                          password: e.target.value,
-                        }))
-                      }
-                    />
+                    <Input id="password" type="password" required />
                   </div>
                   <div className="flex flex-col gap-3">
-                    <Button
-                      type="submit"
-                      disabled={loading}
-                      className="w-full cursor-pointer"
-                    >
-                      {loading ? "Loading..." : "Sign Up"}
+                    <Button type="submit" className="w-full cursor-pointer">
+                      Sign Up
                     </Button>
                     <Button variant="outline" className="w-full cursor-pointer">
                       Continue with Google <FcGoogle />
