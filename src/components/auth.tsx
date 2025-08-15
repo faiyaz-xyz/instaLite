@@ -1,9 +1,10 @@
 "use client";
 
+import { app, auth, db } from "../../firebaseConfig";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useState } from "react";
 import { cn } from "../lib/utils";
 import { Button } from "./ui/button";
-import { toast } from "sonner";
 import {
   Card,
   CardContent,
@@ -14,9 +15,41 @@ import {
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { FcGoogle } from "react-icons/fc";
+import { setDoc, doc } from "firebase/firestore";
 
 export function Auth({ className, ...props }: React.ComponentProps<"div">) {
   const [isLogin, setIsLogin] = useState(true);
+
+  const [userData, setUserData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const handleSignUp = (e: React.FormEvent) => {
+    e.preventDefault();
+    createUserWithEmailAndPassword(auth, userData.email, userData.password)
+      .then(async (res) => {
+        const user = res.user;
+
+        await updateProfile(user, {
+          displayName: userData.name,
+        });
+
+        await setDoc(doc(db, "users", user.uid), {
+          uid: user.uid,
+          name: userData.name,
+          email: user.email,
+          createdAt: new Date().toISOString(),
+        });
+
+        console.log(user);
+      })
+      .catch((error) => {
+        console.log("Error Code:- ", error.code);
+        console.log("Error Message:- ", error.message);
+      });
+  };
 
   return (
     <div>
@@ -38,14 +71,13 @@ export function Auth({ className, ...props }: React.ComponentProps<"div">) {
                       id="email"
                       type="email"
                       placeholder="spongebob@squarepants.com"
-                      required
                     />
                   </div>
                   <div className="grid gap-3">
                     <div className="flex items-center">
                       <Label htmlFor="password">Password</Label>
                     </div>
-                    <Input id="password" type="password" required />
+                    <Input id="password" type="password" />
                   </div>
                   <div className="flex flex-col gap-3">
                     <Button type="submit" className="w-full cursor-pointer">
@@ -79,7 +111,7 @@ export function Auth({ className, ...props }: React.ComponentProps<"div">) {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form>
+              <form onSubmit={handleSignUp}>
                 <div className="flex flex-col gap-6">
                   <div className="grid gap-3">
                     <Label htmlFor="email">Name</Label>
@@ -87,7 +119,12 @@ export function Auth({ className, ...props }: React.ComponentProps<"div">) {
                       id="name"
                       type="text"
                       placeholder="Spongebob Squarepants"
-                      required
+                      onChange={(e) =>
+                        setUserData((prev) => ({
+                          ...prev,
+                          name: e.target.value,
+                        }))
+                      }
                     />
                   </div>
                   <div className="grid gap-3">
@@ -96,14 +133,28 @@ export function Auth({ className, ...props }: React.ComponentProps<"div">) {
                       id="email"
                       type="email"
                       placeholder="spongebob@squarepants.com"
-                      required
+                      onChange={(e) =>
+                        setUserData((prev) => ({
+                          ...prev,
+                          email: e.target.value,
+                        }))
+                      }
                     />
                   </div>
                   <div className="grid gap-3">
                     <div className="flex items-center">
                       <Label htmlFor="password">Password</Label>
                     </div>
-                    <Input id="password" type="password" required />
+                    <Input
+                      id="password"
+                      type="password"
+                      onChange={(e) =>
+                        setUserData((prev) => ({
+                          ...prev,
+                          password: e.target.value,
+                        }))
+                      }
+                    />
                   </div>
                   <div className="flex flex-col gap-3">
                     <Button type="submit" className="w-full cursor-pointer">
